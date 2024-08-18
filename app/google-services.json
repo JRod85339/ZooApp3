@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1015727042815",
+    "firebase_url": "https://zooappfinal-default-rtdb.firebaseio.com",
+    "project_id": "zooappfinal",
+    "storage_bucket": "zooappfinal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015727042815:android:5253689854d8a02e145cca",
+        "android_client_info": {
+          "package_name": "com.example.zooappfinal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE-_65jVHQzKjOpYNRjkOwj_C0QMoBNKQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
