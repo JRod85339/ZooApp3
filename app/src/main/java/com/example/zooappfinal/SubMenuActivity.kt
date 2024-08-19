@@ -68,16 +68,11 @@ class SubMenuActivity : AppCompatActivity() {
                         // Set item click listener
                         listViewDetails.setOnItemClickListener { _, _, position, _ ->
                             val selection = animalsList[position]
-                            Toast.makeText(this, "Animal selected: ${selection.Name}", Toast.LENGTH_SHORT).show()
-//                            val intent = Intent(this, AnimalDetailsActivity::class.java)
-//                            intent.putExtra(AnimalDetailsActivity.EXTRA_ID, selection.ID)
-//                            intent.putExtra(AnimalDetailsActivity.EXTRA_NAME, selection.Name)
-//                            intent.putExtra(AnimalDetailsActivity.EXTRA_TYPE, selection.Type)
-//                            intent.putExtra(AnimalDetailsActivity.EXTRA_HEALTH, selection.Health)
-//                            intent.putExtra(AnimalDetailsActivity.EXTRA_FOOD, selection.Food)
-//                            startActivity(intent)
+                            Toast.makeText(this, "Animal selected: ${selection.ID}", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this, AnimalDetailsActivity::class.java)
+                            intent.putExtra(AnimalDetailsActivity.EXTRA_ID, selection.ID)
+                            startActivity(intent)
                         }
-
                     }
                 }
                 else {

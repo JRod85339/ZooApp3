@@ -1,5 +1,7 @@
 package com.example.zooappfinal.data
 
+import android.util.Log
+import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -7,18 +9,30 @@ import com.google.firebase.database.ValueEventListener
 
 object FirebaseManager {
 
-    val database = FirebaseDatabase.getInstance()
-    val animalsRef = database.getReference("Animals")
-    val habitatsRef = database.getReference("Habitats")
+    private val database = FirebaseDatabase.getInstance()
+    private val animalsRef = database.getReference("Animals")
+    private val habitatsRef = database.getReference("Habitats")
 
-    fun addAnimal(id: String, animal: Animal) {
-        animalsRef.child(id).setValue(animal)
-            .addOnSuccessListener {
-                // Successfully added
-            }
-            .addOnFailureListener {
-                // Failed to add
-            }
+    fun addAnimal(animal: Animal) {
+        // Generate a unique ID for the new animal
+        val id = animalsRef.push().key
+        // Ensure the ID is not null
+        if (id != null) {
+            // Add the animal with the generated ID
+            animalsRef.child(id).setValue(animal)
+                .addOnSuccessListener {
+                    // Successfully added
+                    Log.d("FirebaseManager", "Animal added with ID: $id")
+                }
+                .addOnFailureListener { e ->
+                    // Failed to add
+                    Log.e("FirebaseManager", "Failed to add animal: ${e.message}")
+                }
+        }
+        // Handle the case where the ID is null
+        else {
+            Log.e("FirebaseManager", "Failed to generate a new animal ID")
+        }
     }
 
     fun addHabitat(id: String, habitat: Habitat) {
@@ -66,6 +80,29 @@ object FirebaseManager {
             override fun onCancelled(error: DatabaseError) {
                 // Handle error
                 onResult(emptyList())
+            }
+        })
+    }
+    fun getAnimalById(id: String, onResult: (Animal?) -> Unit) {
+        // Create a reference to the specific animal node in the database
+        val animalRef = animalsRef.child(id)
+        // Read the data from the database
+        animalRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            // Check if data exists
+            if (snapshot.exists()) {
+                // Retrieve data from the snapshot
+                val animal = snapshot.getValue(Animal::class.java)
+                // Return the animal through the callback
+                onResult(animal)
+            } else {
+                // No data found, return null through the callback
+                onResult(null)
+            }
+        }
+            override fun onCancelled(error: DatabaseError) {
+                // Handle possible errors
+                Log.e("FirebaseManager", "Error reading animal data: ${error.message}")
             }
         })
     }
@@ -177,15 +214,24 @@ object FirebaseManager {
         })
     }
 
-    fun updateAnimal(id: String, updatedAnimal: Animal) {
-        animalsRef.child(id).setValue(updatedAnimal)
+    fun updateAnimalById(id: String, updatedAnimal: Animal, onComplete: (Boolean) -> Unit) {
+        // Create a reference to the specific animal node
+        val animalRef = animalsRef.child(id)
+
+        // Replace the entire animal data using setValue
+        animalRef.setValue(updatedAnimal)
             .addOnSuccessListener {
-                // Successfully updated
+                // Update was successful
+                onComplete(true)
+                Log.d("FirebaseManager", "Animal with ID: $id successfully updated")
             }
-            .addOnFailureListener {
-                // Failed to update
+            .addOnFailureListener { e ->
+                // Handle any errors
+                onComplete(false)
+                Log.e("FirebaseManager", "Failed to update animal: ${e.message}")
             }
     }
+
 
     fun updateHabitat(id: String, updatedHabitat: Habitat) {
         habitatsRef.child(id).setValue(updatedHabitat)
@@ -201,9 +247,11 @@ object FirebaseManager {
         animalsRef.child(id).removeValue()
             .addOnSuccessListener {
                 // Successfully deleted
+                Log.d("FirebaseManager", "Animal with ID: $id successfully deleted")
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
                 // Failed to delete
+                Log.e("FirebaseManager", "Failed to delete animal: ${e.message}")
             }
     }
 
@@ -216,6 +264,7 @@ object FirebaseManager {
                 // Failed to delete
             }
     }
+
 
 
 }
